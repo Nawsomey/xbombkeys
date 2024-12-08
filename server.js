@@ -6,7 +6,7 @@ const app = express();
 const KEYAUTH_APP_NAME = 'Nawsifsspammail';
 const KEYAUTH_OWNER_ID = 'vNCzuzTjmw';
 const KEYAUTH_VERSION = '1.0';
-const KEYAUTH_SECRET = '8ba98b52ef0d15cc5df241acb88e67c11db8f423608a0151dfaae0b281a4e01a'; // Your secret key for KeyAuth (required)
+const KEYAUTH_SECRET = process.env.KEYAUTH_SECRET; // App Secret from environment variable
 
 app.use(express.json());
 
@@ -16,15 +16,15 @@ app.post('/generate-key', async (req, res) => {
         const username = req.body.username; // Assuming username is sent in the body
         const password = req.body.password; // Assuming password is sent in the body
 
-        // Make API request to KeyAuth to create a user (which can also generate a key)
-const response = await axios.post('https://keyauth.com/api/keys/generate', {
-    name: KEYAUTH_APP_NAME,
-    ownerid: KEYAUTH_OWNER_ID,
-    secret: KEYAUTH_APP_SECRET, // App Secret
-    version: KEYAUTH_VERSION,
-    // Add other necessary parameters here
-});
-
+        // Make API request to KeyAuth to create a user and generate a key
+        const response = await axios.post('https://keyauth.com/api/auth/create', {
+            name: KEYAUTH_APP_NAME,
+            ownerid: KEYAUTH_OWNER_ID,
+            secret: KEYAUTH_SECRET,
+            version: KEYAUTH_VERSION,
+            username: username,
+            password: password
+        });
 
         // Check if the response is successful
         if (response.data.success) {
