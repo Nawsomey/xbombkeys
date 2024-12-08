@@ -3,25 +3,35 @@ const axios = require('axios');
 const app = express();
 
 // Setup your KeyAuth API credentials here
-const KEYAUTH_APP_NAME = 'Nawsifsspammail's Application';
+const KEYAUTH_APP_NAME = 'Nawsifsspammail';
 const KEYAUTH_OWNER_ID = 'vNCzuzTjmw';
 const KEYAUTH_VERSION = '1.0';
+const KEYAUTH_SECRET = '8ba98b52ef0d15cc5df241acb88e67c11db8f423608a0151dfaae0b281a4e01a'; // Your secret key for KeyAuth (required)
 
 app.use(express.json());
 
-// Endpoint to generate a key
+// Endpoint to create a user and generate a key
 app.post('/generate-key', async (req, res) => {
     try {
-        // Make API request to KeyAuth to generate a new key
-        const response = await axios.post('https://keyauth.com/api/', {
-            name: KEYAUTH_APP_NAME,
+        const username = req.body.username; // Assuming username is sent in the body
+        const password = req.body.password; // Assuming password is sent in the body
+
+        // Make API request to KeyAuth to create a user (which can also generate a key)
+        const response = await axios.post('https://keyauth.com/api/createuser', {
+            username,
+            password,
+            license: "userlicense", // You can specify a license type if needed
+            appname: KEYAUTH_APP_NAME,
             ownerid: KEYAUTH_OWNER_ID,
-            version: KEYAUTH_VERSION,
-            // Add additional data here as needed
+            secret: KEYAUTH_SECRET,
         });
 
-        // Return the generated key
-        res.json({ key: response.data.key });
+        // Check if the response is successful
+        if (response.data.success) {
+            res.json({ key: response.data.key });
+        } else {
+            res.status(400).json({ error: 'Failed to generate key. ' + response.data.message });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to generate key.' });
