@@ -17,14 +17,14 @@ app.post('/generate-key', async (req, res) => {
         const password = req.body.password; // Assuming password is sent in the body
 
         // Make API request to KeyAuth to create a user (which can also generate a key)
-        const response = await axios.post('https://keyauth.com/api/createuser', {
-            username,
-            password,
-            license: "userlicense", // You can specify a license type if needed
-            appname: KEYAUTH_APP_NAME,
-            ownerid: KEYAUTH_OWNER_ID,
-            secret: KEYAUTH_SECRET,
-        });
+const response = await axios.post('https://keyauth.com/api/keys/generate', {
+    name: KEYAUTH_APP_NAME,
+    ownerid: KEYAUTH_OWNER_ID,
+    secret: KEYAUTH_APP_SECRET, // App Secret
+    version: KEYAUTH_VERSION,
+    // Add other necessary parameters here
+});
+
 
         // Check if the response is successful
         if (response.data.success) {
