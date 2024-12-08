@@ -19,6 +19,10 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                    body: JSON.stringify({
+                        username: 'user1',  // Example username, replace as needed
+                        password: 'password123'  // Example password, replace as needed
+                    })
                 });
 
                 if (response.ok) {
